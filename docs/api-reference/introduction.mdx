@@ -18,6 +18,7 @@ https://api.mokra.ai/api
 All requests require an API key in the `X-API-Key` header:
 
 ```bash
+# Example request (replace mk_live_your_key with your API key)
 curl https://api.mokra.ai/api/worlds \
   -H "X-API-Key: mk_live_your_key"
 ```
@@ -46,6 +47,7 @@ Assertions verify that expected outcomes occurred, regardless of the path taken 
 ## Quick example
 
 ```bash
+# Example workflow (replace mk_live_... with your API key)
 # 1. Create a world
 curl -X POST https://api.mokra.ai/api/worlds \
   -H "X-API-Key: mk_live_..." \

@@ -31,6 +31,7 @@ ANY https://api.mokra.ai/mock/{service}/{path}
 ## Example: Stripe charge
 
 ```bash
+# Example request (replace mk_live_your_key with your API key)
 curl -X POST https://api.mokra.ai/mock/stripe/v1/charges \
   -H "X-API-Key: mk_live_your_key" \
   -H "Content-Type: application/x-www-form-urlencoded" \
@@ -54,6 +55,7 @@ curl -X POST https://api.mokra.ai/mock/stripe/v1/charges \
 ## Example: Shopify order
 
 ```bash
+# Example request (replace mk_live_your_key with your API key)
 curl https://api.mokra.ai/mock/shopify/admin/api/2024-01/orders/123.json \
   -H "X-API-Key: mk_live_your_key"
 ```
@@ -77,6 +79,7 @@ curl https://api.mokra.ai/mock/shopify/admin/api/2024-01/orders/123.json \
 To maintain state across requests, include a World ID:
 
 ```bash
+# Example requests (replace mk_live_your_key and world_abc123 with real values)
 # Create a customer
 curl -X POST https://api.mokra.ai/mock/stripe/v1/customers \
   -H "X-API-Key: mk_live_your_key" \

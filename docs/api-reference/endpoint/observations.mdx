@@ -65,6 +65,7 @@ GET https://api.mokra.ai/api/worlds/{id}/observations
 ## Example
 
 ```bash
+# Example request (replace mk_live_your_key and world_abc123 with real values)
 curl https://api.mokra.ai/api/worlds/world_abc123/observations \
   -H "X-API-Key: mk_live_your_key"
 ```
@@ -72,6 +73,7 @@ curl https://api.mokra.ai/api/worlds/world_abc123/observations \
 ### Text format
 
 ```bash
+# Example request
 curl "https://api.mokra.ai/api/worlds/world_abc123/observations?format=text" \
   -H "X-API-Key: mk_live_your_key"
 ```
@@ -86,6 +88,7 @@ POST sendgrid/v3/mail/send → Sent email to customer@example.com
 ### Filter by service
 
 ```bash
+# Example request
 curl "https://api.mokra.ai/api/worlds/world_abc123/observations?service=stripe" \
   -H "X-API-Key: mk_live_your_key"
 ```
