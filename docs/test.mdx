@@ -3,7 +3,7 @@ title: "Test your setup"
 description: "Verify that Mokra is configured correctly with a quick smoke test."
 ---
 
-This page walks you through a quick smoke test to confirm your Mokra API key is working and mock servers are returning responses.
+Run a quick smoke test to confirm your Mokra API key is working and mock servers are returning responses.
 
 ## Prerequisites
 
@@ -54,6 +54,7 @@ end
 ```python Python
 import os
 import mokra
+from mokra import mockworld
 import stripe
 
 mokra.configure(api_key=os.environ["MOKRA_API_KEY"])
@@ -61,7 +62,7 @@ mokra.configure(api_key=os.environ["MOKRA_API_KEY"])
 # Create a MockWorld
 #   name     (str, required) - a label for this test run
 #   services (list, required) - which third-party APIs to mock
-world = mokra.mockworld(name="smoke-test", services=["stripe"])
+world = mockworld(name="smoke-test", services=["stripe"])
 
 with world.run():
     charge = stripe.Charge.create(
@@ -83,19 +84,17 @@ You can also use the observe primitive to confirm that Mokra recorded the API ca
 
 <CodeGroup>
 ```ruby Ruby
-result = world.observe
-puts result
+world.observe
 
-# Response:
-# - POST /v1/charges → 200: Created a charge for $10.00 USD
+# Output:
+# POST stripe/v1/charges → Created a charge for $10.00 USD
 ```
 
 ```python Python
-result = world.observe()
-print(result)
+world.observe()
 
-# Response:
-# - POST /v1/charges → 200: Created a charge for $10.00 USD
+# Output:
+# POST stripe/v1/charges → Created a charge for $10.00 USD
 ```
 </CodeGroup>
 
@@ -119,6 +118,7 @@ The `run` block may have thrown an error before any API calls were made. Check f
 
 Now that your setup is verified, you can:
 
-- [Create your first MockWorld test](/mock-servers/quickstart) with real service interactions
+- [Explore mock servers](/mock-servers/quickstart) for realistic API responses without sandbox accounts
+- [Create your first MockWorld test](/mockworld-tests/quickstart) to test AI agent behavior
 - [Learn how observe works](/mockworld-tests/observe) to inspect what happened during a test
 - [Add assertions](/mockworld-tests/assert) to validate behavior automatically
