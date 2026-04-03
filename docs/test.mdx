@@ -10,10 +10,10 @@ Run a quick smoke test to confirm your Mokra API key is working and mock servers
 Before running this test, you need:
 
 - A Mokra API key (sign up at [app.mokra.ai](https://app.mokra.ai) if you don't have one)
-- The SDK installed for your language ([Ruby](/sdks/ruby) or [Python](/sdks/python))
+- The SDK installed for your language ([Ruby](sdks/ruby) or [Python](sdks/python))
 
 <Note>
-A [TypeScript SDK](/sdks/typescript) is coming soon. For now, use the Ruby or Python SDK to verify your setup.
+A [TypeScript SDK](sdks/typescript) is coming soon. For now, use the Ruby or Python SDK to verify your setup.
 </Note>
 
 Set your API key as an environment variable:
@@ -98,7 +98,7 @@ world.observe()
 ```
 </CodeGroup>
 
-The `observe` call returns a human-readable summary of every HTTP request made during the test. If you see your charge listed, Mokra is intercepting and recording calls as expected. See the [Observe guide](/mockworld-tests/observe) for more details on what observe returns and how to use it in assertions.
+The `observe` call returns a human-readable summary of every HTTP request made during the test. If you see your charge listed, Mokra is intercepting and recording calls as expected. See the [Observe guide](mockworld-tests/observe) for more details on what observe returns and how to use it in assertions.
 
 ## Troubleshoot common issues
 
@@ -118,7 +118,7 @@ The `run` block may have thrown an error before any API calls were made. Check f
 
 Now that your setup is verified, you can:
 
-- [Explore mock servers](/mock-servers/quickstart) for realistic API responses without sandbox accounts
-- [Create your first MockWorld test](/mockworld-tests/quickstart) to test AI agent behavior
-- [Learn how observe works](/mockworld-tests/observe) to inspect what happened during a test
-- [Add assertions](/mockworld-tests/assert) to validate behavior automatically
+- [Explore mock servers](mock-servers/quickstart) for realistic API responses without sandbox accounts
+- [Create your first MockWorld test](mockworld-tests/quickstart) to test AI agent behavior
+- [Learn how observe works](mockworld-tests/observe) to inspect what happened during a test
+- [Add assertions](mockworld-tests/assert) to validate behavior automatically
