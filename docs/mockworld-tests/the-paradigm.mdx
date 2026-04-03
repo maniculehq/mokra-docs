@@ -7,7 +7,7 @@ description: "A new paradigm for AI agent safety, introduced by Peter Nsaka"
 
 A new paradigm for testing AI agents, introduced by Peter Nsaka (former Shopify engineer, YC founder, CTO of Handled).
 
-> "Before an AI agent ever touches the real world, it should prove itself in a world that is identical to the real world in every meaningful way — but isn't."
+> "Before an AI agent ever touches the real world, it should prove itself in a world that is identical to the real world in every meaningful way - but isn't."
 
 ## The problem we're solving
 
@@ -17,7 +17,7 @@ But how do you test something that could burn the house down?
 
 ### Traditional testing doesn't work
 
-Software engineers have long understood staging environments, mock APIs, and test suites. These were designed for **deterministic software** — code that, given the same input, always produces the same output.
+Software engineers have long understood staging environments, mock APIs, and test suites. These were designed for **deterministic software** - code that, given the same input, always produces the same output.
 
 AI agents are not deterministic. They:
 - **Reason** about what to do
@@ -48,7 +48,7 @@ The agent enters the MockWorld. It acts. It makes decisions. It calls APIs. And 
 - Did it avoid what it was meant to avoid?
 - Did it behave safely when things went wrong?
 
-**The MockWorld Test is how you find out whether your AI agent is ready for the real world — before the real world finds out for you.**
+**The MockWorld Test is how you find out whether your AI agent is ready for the real world - before the real world finds out for you.**
 
 ## How it's different
 
@@ -64,7 +64,7 @@ It's the difference between asking someone a question in an interview and watchi
 
 Imagine this at scale:
 
-A library of MockWorlds — one for every major service an AI agent might interact with. A MockWorld for Gmail. A MockWorld for Stripe. A MockWorld for Salesforce, Slack, GitHub, AWS, and hundreds more.
+A library of MockWorlds - one for every major service an AI agent might interact with. A MockWorld for Gmail. A MockWorld for Stripe. A MockWorld for Salesforce, Slack, GitHub, AWS, and hundreds more.
 
 Each MockWorld stays in sync with its real-world counterpart. When the real Stripe API ships a new endpoint, the MockWorld reflects it. When Gmail changes its threading behavior, the MockWorld adapts.
 
@@ -75,7 +75,7 @@ AI agents run through these MockWorlds before every deployment. They are scored 
 - Did they behave consistently across thousands of runs?
 - Did they avoid side effects they weren't supposed to create?
 
-**The MockWorld Test becomes a standard — like a safety rating for a car, or a clinical trial for a drug.**
+**The MockWorld Test becomes a standard - like a safety rating for a car, or a clinical trial for a drug.**
 
 ## The stakes
 

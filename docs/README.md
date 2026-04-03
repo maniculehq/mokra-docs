@@ -1,6 +1,6 @@
 # Mokra Documentation
 
-Official documentation for [Mokra](https://mokra.ai) — Mock servers for 800+ APIs. MockWorld Tests for AI agents.
+Official documentation for [Mokra](https://mokra.ai) - Mock servers for 800+ APIs. MockWorld Tests for AI agents.
 
 ## What is Mokra?
 

@@ -45,7 +45,7 @@ Mockworld.configure do |config|
   config.api_key = ENV['MOKRA_API_KEY']
 end
 
-# Make normal API calls — Mokra intercepts them
+# Make normal API calls - Mokra intercepts them
 charge = Stripe::Charge.create(
   amount: 5000,
   currency: "usd",
@@ -63,7 +63,7 @@ import stripe
 
 mokra.configure(api_key=os.environ["MOKRA_API_KEY"])
 
-# Make normal API calls — Mokra intercepts them
+# Make normal API calls - Mokra intercepts them
 charge = stripe.Charge.create(
     amount=5000,
     currency="usd",
