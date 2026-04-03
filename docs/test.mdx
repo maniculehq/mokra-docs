@@ -1,0 +1,36 @@
+---
+title: "Test Page"
+description: "A test document to verify the documentation pipeline is working correctly."
+---
+
+# Test Page
+
+This is a test document for the Mokra documentation site. If you can read this, the Mintlify rendering pipeline is working as expected.
+
+## Verification checklist
+
+Use this page to confirm the following:
+
+1. **MDX rendering**: This page renders without errors in the Mintlify preview (`mint dev`) and in production.
+2. **Navigation**: If added to `docs.json`, this page appears in the sidebar at the expected location.
+3. **Components**: The Mintlify components below render correctly.
+
+<Note>
+  This is a test note component. If you see this styled as a callout, Mintlify components are working.
+</Note>
+
+## Code block test
+
+The following code block confirms syntax highlighting works for a Ruby example using the Mokra SDK:
+
+```ruby
+require "mockworld"
+
+Mockworld.configure do |config|
+  config.api_key = "mk_live_test_key"
+end
+```
+
+## Cleanup
+
+This page is not part of the production documentation. Remove it (and its entry in `docs.json`, if added) before shipping.
