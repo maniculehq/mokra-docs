@@ -1,27 +1,31 @@
 ---
-title: "Test Page"
-description: "A test document to verify the documentation pipeline is working correctly."
+title: "Verify the documentation pipeline"
+description: "Use this page to confirm that MDX rendering, Mintlify components, navigation, and syntax highlighting all work correctly."
 ---
 
-# Test Page
+# Verify the documentation pipeline
 
-This is a test document for the Mokra documentation site. If you can read this, the Mintlify rendering pipeline is working as expected.
+If you can read this page with proper formatting, the Mintlify rendering pipeline is working. Use the sections below to confirm each part of the pipeline individually.
 
-## Verification checklist
+<Warning>
+  This page is not part of the production documentation. Remove it (and its entry in `docs.json`, if added) before shipping to production.
+</Warning>
 
-Use this page to confirm the following:
+## Confirm rendering, navigation, and components
+
+Walk through each item to verify the pipeline end to end:
 
 1. **MDX rendering**: This page renders without errors in the Mintlify preview (`mint dev`) and in production.
 2. **Navigation**: If added to `docs.json`, this page appears in the sidebar at the expected location.
-3. **Components**: The Mintlify components below render correctly.
+3. **Components**: The Mintlify components on this page (the warning above and the note below) render as styled callouts.
 
 <Note>
   This is a test note component. If you see this styled as a callout, Mintlify components are working.
 </Note>
 
-## Code block test
+## Verify syntax highlighting
 
-The following code block confirms syntax highlighting works for a Ruby example using the Mokra SDK:
+The following code block confirms syntax highlighting works for a Ruby example using the Mokra SDK. You should see color-coded keywords, strings, and method calls.
 
 ```ruby
 require "mockworld"
@@ -31,6 +35,4 @@ Mockworld.configure do |config|
 end
 ```
 
-## Cleanup
-
-This page is not part of the production documentation. Remove it (and its entry in `docs.json`, if added) before shipping.
+If the block above appears as a plain monospace block without colors, check that your Mintlify configuration supports Ruby syntax highlighting.
