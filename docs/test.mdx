@@ -3,8 +3,6 @@ title: "Test your setup"
 description: "Verify that Mokra is configured correctly with a quick smoke test."
 ---
 
-# Test your setup
-
 This page walks you through a quick smoke test to confirm your Mokra API key is working and mock servers are returning responses.
 
 ## Prerequisites
@@ -12,7 +10,11 @@ This page walks you through a quick smoke test to confirm your Mokra API key is 
 Before running this test, you need:
 
 - A Mokra API key (sign up at [app.mokra.ai](https://app.mokra.ai) if you don't have one)
-- The SDK installed for your language ([Ruby](/sdks/ruby), [Python](/sdks/python), or [TypeScript](/sdks/typescript))
+- The SDK installed for your language ([Ruby](/sdks/ruby) or [Python](/sdks/python))
+
+<Note>
+A [TypeScript SDK](/sdks/typescript) is coming soon. For now, use the Ruby or Python SDK to verify your setup.
+</Note>
 
 Set your API key as an environment variable:
 
@@ -32,6 +34,9 @@ Mockworld.configure do |config|
   config.api_key = ENV['MOKRA_API_KEY']
 end
 
+# Create a MockWorld
+#   name    (string, required) - a label for this test run
+#   services (array, required) - which third-party APIs to mock
 world = mockworld(name: "smoke-test", services: ["stripe"])
 
 world.run do
@@ -41,8 +46,8 @@ world.run do
     source: "tok_visa"
   )
 
-  puts charge.id      # Should print a mock charge ID like "ch_mock_abc123"
-  puts charge.status  # Should print "succeeded"
+  puts charge.id      # => "ch_mock_abc123"
+  puts charge.status  # => "succeeded"
 end
 ```
 
@@ -53,6 +58,9 @@ import stripe
 
 mokra.configure(api_key=os.environ["MOKRA_API_KEY"])
 
+# Create a MockWorld
+#   name     (str, required) - a label for this test run
+#   services (list, required) - which third-party APIs to mock
 world = mokra.mockworld(name="smoke-test", services=["stripe"])
 
 with world.run():
@@ -62,8 +70,8 @@ with world.run():
         source="tok_visa",
     )
 
-    print(charge.id)      # Should print a mock charge ID like "ch_mock_abc123"
-    print(charge.status)  # Should print "succeeded"
+    print(charge.id)      # => "ch_mock_abc123"
+    print(charge.status)  # => "succeeded"
 ```
 </CodeGroup>
 
@@ -75,24 +83,42 @@ You can also use the observe primitive to confirm that Mokra recorded the API ca
 
 <CodeGroup>
 ```ruby Ruby
-world.observe
-# Output:
+result = world.observe
+puts result
+
+# Response:
 # - POST /v1/charges → 200: Created a charge for $10.00 USD
 ```
 
 ```python Python
-world.observe()
-# Output:
+result = world.observe()
+print(result)
+
+# Response:
 # - POST /v1/charges → 200: Created a charge for $10.00 USD
 ```
 </CodeGroup>
 
-The `observe` call returns a human-readable summary of every HTTP request made during the test. If you see your charge listed, Mokra is intercepting and recording calls as expected.
+The `observe` call returns a human-readable summary of every HTTP request made during the test. If you see your charge listed, Mokra is intercepting and recording calls as expected. See the [Observe guide](/mockworld-tests/observe) for more details on what observe returns and how to use it in assertions.
 
-## Common issues
+## Troubleshoot common issues
 
-**"Unauthorized" or 401 error**: Your API key is missing or invalid. Double-check that `MOKRA_API_KEY` is set in your environment and starts with `mk_live_`.
+### "Unauthorized" or 401 error
 
-**"Connection refused" or timeout**: Your network may be blocking requests to `api.mokra.ai`. Check firewall rules or proxy settings.
+Your API key is missing or invalid. Double-check that `MOKRA_API_KEY` is set in your environment and starts with `mk_live_`.
 
-**Empty observe output**: The `run` block may have thrown an error before any API calls were made. Check for exceptions in the block and make sure your Stripe (or other service) SDK is installed.
+### "Connection refused" or timeout
+
+Your network may be blocking requests to `api.mokra.ai`. Check firewall rules or proxy settings.
+
+### Empty observe output
+
+The `run` block may have thrown an error before any API calls were made. Check for exceptions in the block and make sure your Stripe (or other service) SDK is installed.
+
+## What's next
+
+Now that your setup is verified, you can:
+
+- [Create your first MockWorld test](/mock-servers/quickstart) with real service interactions
+- [Learn how observe works](/mockworld-tests/observe) to inspect what happened during a test
+- [Add assertions](/mockworld-tests/assert) to validate behavior automatically
