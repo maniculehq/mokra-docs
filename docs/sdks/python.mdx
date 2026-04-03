@@ -13,212 +13,170 @@ The official Python SDK for Mokra mock servers and MockWorld Tests.
 pip install mokra
 ```
 
-## Configuration
+## Quick Start
+
+The `mokra` package provides an `observe()` context manager that intercepts
+HTTP calls made by your code and records what happened.
 
 ```python
-import mokra
+from mokra import observe
+import requests
 
-mokra.configure(
-    api_key="mk_live_...",
-    base_url="https://api.mokra.ai/api"  # Optional
-)
+with observe() as world:
+    response = requests.post(
+        "https://api.stripe.com/v1/charges",
+        auth=("sk_test_anything", ""),
+        data={"amount": 5000, "currency": "usd"}
+    )
+
+# Print what happened
+print(world)
 ```
 
 ### Environment variables
 
 ```bash
 export MOKRA_API_KEY="mk_live_..."
-export MOKRA_BASE_URL="https://api.mokra.ai/api"  # Optional
 ```
-
-```python
-import mokra
-import os
-
-mokra.configure(api_key=os.environ["MOKRA_API_KEY"])
-```
-
-## Mock Servers
+## Observing HTTP Calls
 
 ### Basic usage
 
-Once configured, HTTP calls are automatically intercepted:
+Wrap your code in `observe()` to record all HTTP interactions:
 
 ```python
-import stripe
-
-# Your code makes normal API calls
-charge = stripe.Charge.create(amount=5000, currency="usd")
-# => Returns realistic mock response
-```
-
-### With requests
-
-```python
+from mokra import observe
 import requests
 
-response = requests.post(
-    "https://api.stripe.com/v1/charges",
-    auth=("sk_test_anything", ""),
-    data={"amount": 5000, "currency": "usd"}
-)
-# => Intercepted and returns mock response
+with observe() as world:
+    # Your code makes normal API calls
+    response = requests.post(
+        "https://api.stripe.com/v1/charges",
+        auth=("sk_test_anything", ""),
+        data={"amount": 5000, "currency": "usd"}
+    )
+
+# See what happened
+print(world)
+# Outputs a table of service, method, URL, and status code
 ```
 
-## MockWorld Tests
+The `observe()` context manager patches `requests` and `httpx` at the HTTP
+adapter layer. Your code runs normally; mokra just records every request and
+response.
 
-### Creating a world
+### Accessing recorded data
 
 ```python
-from mokra import mockworld
+with observe() as world:
+    requests.post("https://api.stripe.com/v1/charges", ...)
 
-world = mockworld(name="My test", services=["stripe", "shopify"])
+for service_name, service in world.services.items():
+    print(f"Service: {service_name}")
+    for i, req in enumerate(service.requests):
+        status = service.responses[i]["status_code"]
+        print(f"  {req['method']} {req['url']} -> {status}")
 ```
+## Generating Tests
 
-### Running code
+After observing interactions, generate pytest stubs automatically:
 
 ```python
-with world.run():
-    # Your code here
-    # All HTTP calls are intercepted
-    stripe.Charge.create(amount=5000, currency="usd")
+from mokra import observe, generate_tests
+import requests
+
+with observe() as world:
+    requests.post(
+        "https://api.stripe.com/v1/charges",
+        auth=("sk_test_anything", ""),
+        data={"amount": 5000, "currency": "usd"}
+    )
+
+# Generate pytest code from the observations
+test_code = generate_tests(world)
+print(test_code)
+
+# Or write directly to a file
+generate_tests(world, output_path="tests/test_stripe.py")
 ```
-
-### Observing
-
-```python
-# Print to console
-world.observe()
-
-# Return as string
-log = world.observe(print_output=False)
-logger.info(log)
-
-# Filter by service
-world.observe(service="stripe")
-```
-
-### Asserting
-
-```python
-# Natural language (note: assert_ to avoid Python keyword)
-world.assert_("a refund was created")
-world.assert_("refund amount is $50")
-
-# Multiple assertions
-world.assert_(
-    "exactly one refund was created",
-    "customer was notified",
-    "no errors occurred"
-)
-
-# With service scope
-world.assert_("a return was created", service="loop-returns")
-```
-
-### Accessing state
-
-```python
-state = world.state()
-
-# By service
-state["stripe"]["customers"].count
-state["stripe"]["charges"][0]["amount"]
-```
-
-### Seeding
-
-```python
-world.seed("""
-  stripe:
-    customers:
-      - id: cus_test
-        email: test@example.com
-
-  shopify:
-    orders:
-      - id: order_123
-        total_price: "150.00"
-""")
-```
-
 ## Example: pytest integration
 
 ```python
-# conftest.py
-import pytest
-import mokra
-import os
+# test_stripe.py
+from mokra import observe
+import requests
 
-@pytest.fixture(autouse=True)
-def configure_mokra():
-    mokra.configure(api_key=os.environ["MOKRA_API_KEY"])
+def test_charge_is_recorded():
+    with observe() as world:
+        requests.post(
+            "https://api.stripe.com/v1/charges",
+            auth=("sk_test_anything", ""),
+            data={"amount": 5000, "currency": "usd"}
+        )
 
-# test_refund.py
-from mokra import mockworld
-
-def test_refund_service():
-    world = mockworld(name="Refund test", services=["stripe"])
-
-    with world.run():
-        RefundService.process(payment_id="pi_123", amount=5000)
-
-    world.assert_("a refund was created")
-    world.assert_("refund amount is $50")
+    assert "stripe" in world.services
+    assert len(world.services["stripe"].requests) == 1
+    assert world.services["stripe"].requests[0]["method"] == "POST"
 ```
-
 ## Example: Testing LangChain agents
 
 ```python
-from mokra import mockworld
+from mokra import observe
 from langchain.agents import AgentExecutor
 
 def test_support_agent():
-    world = mockworld(
-        name="Support agent test",
-        services=["stripe", "shopify", "sendgrid"]
-    )
-
-    with world.run():
+    with observe() as world:
         agent = AgentExecutor(...)
         agent.invoke({"input": "Refund order #1234"})
 
-    world.observe()
-    world.assert_("exactly one refund was created")
-    world.assert_("customer was notified")
+    # Check what services the agent called
+    print(world)
+    assert "stripe" in world.services
 ```
-
 ## API Reference
 
-### `mockworld(name, services)`
+### `observe()`
 
-Creates a new MockWorld.
+Context manager that intercepts HTTP calls and records them.
+
+```python
+with observe() as world:
+    # your code here
+    pass
+```
+
+Returns a `WorldState` object.
+
+### `WorldState`
+
+Tracks all observed HTTP interactions.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `services` | dict[str, ServiceState] | Map of service name to state |
+
+Printing a `WorldState` renders a table of all observed requests.
+
+### `ServiceState`
+
+State for a single service.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `name` | str | Service name (e.g. "stripe") |
+| `requests` | list[dict] | Recorded requests (method, url, headers, body) |
+| `responses` | list[dict] | Recorded responses (status_code, headers, body) |
+
+### `generate_tests(world, output_path=None)`
+
+Generate pytest test stubs from observed interactions.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `name` | str | Name for the world |
-| `services` | list | Services to include |
+| `world` | WorldState | Observed interactions |
+| `output_path` | str or None | Optional file path to write tests |
 
-### `world.run()`
-
-Context manager for running code with interception.
-
-### `world.observe(print_output=True, service=None)`
-
-Returns/prints observations.
-
-### `world.assert_(*assertions, service=None)`
-
-Verifies assertions against world state.
-
-### `world.state()`
-
-Returns the current state dict.
-
-### `world.seed(yaml_string)`
-
-Pre-populates state from YAML.
-
+Returns the generated test code as a string.
 ## Next steps
 
 <CardGroup cols={2}>
