@@ -1,0 +1,98 @@
+---
+title: "Test your setup"
+description: "Verify that Mokra is configured correctly with a quick smoke test."
+---
+
+# Test your setup
+
+This page walks you through a quick smoke test to confirm your Mokra API key is working and mock servers are returning responses.
+
+## Prerequisites
+
+Before running this test, you need:
+
+- A Mokra API key (sign up at [app.mokra.ai](https://app.mokra.ai) if you don't have one)
+- The SDK installed for your language ([Ruby](/sdks/ruby), [Python](/sdks/python), or [TypeScript](/sdks/typescript))
+
+Set your API key as an environment variable:
+
+```bash
+export MOKRA_API_KEY=mk_live_xxxxxxxxxxxxxxxx
+```
+
+## Run a smoke test
+
+The simplest way to verify your setup is to create a MockWorld, make one mock API call, and check the response. Here's a complete test you can copy and run:
+
+<CodeGroup>
+```ruby Ruby
+require 'mockworld'
+
+Mockworld.configure do |config|
+  config.api_key = ENV['MOKRA_API_KEY']
+end
+
+world = mockworld(name: "smoke-test", services: ["stripe"])
+
+world.run do
+  charge = Stripe::Charge.create(
+    amount: 1000,
+    currency: "usd",
+    source: "tok_visa"
+  )
+
+  puts charge.id      # Should print a mock charge ID like "ch_mock_abc123"
+  puts charge.status  # Should print "succeeded"
+end
+```
+
+```python Python
+import os
+import mokra
+import stripe
+
+mokra.configure(api_key=os.environ["MOKRA_API_KEY"])
+
+world = mokra.mockworld(name="smoke-test", services=["stripe"])
+
+with world.run():
+    charge = stripe.Charge.create(
+        amount=1000,
+        currency="usd",
+        source="tok_visa",
+    )
+
+    print(charge.id)      # Should print a mock charge ID like "ch_mock_abc123"
+    print(charge.status)  # Should print "succeeded"
+```
+</CodeGroup>
+
+If you see a mock charge ID and `"succeeded"` status, your setup is working correctly.
+
+## Verify with observe
+
+You can also use the observe primitive to confirm that Mokra recorded the API call. Add this after the `run` block:
+
+<CodeGroup>
+```ruby Ruby
+world.observe
+# Output:
+# - POST /v1/charges → 200: Created a charge for $10.00 USD
+```
+
+```python Python
+world.observe()
+# Output:
+# - POST /v1/charges → 200: Created a charge for $10.00 USD
+```
+</CodeGroup>
+
+The `observe` call returns a human-readable summary of every HTTP request made during the test. If you see your charge listed, Mokra is intercepting and recording calls as expected.
+
+## Common issues
+
+**"Unauthorized" or 401 error**: Your API key is missing or invalid. Double-check that `MOKRA_API_KEY` is set in your environment and starts with `mk_live_`.
+
+**"Connection refused" or timeout**: Your network may be blocking requests to `api.mokra.ai`. Check firewall rules or proxy settings.
+
+**Empty observe output**: The `run` block may have thrown an error before any API calls were made. Check for exceptions in the block and make sure your Stripe (or other service) SDK is installed.
